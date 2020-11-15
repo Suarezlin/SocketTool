@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.beryx.jlink' version '2.16.4'
+}
+
+group 'com.linziniu'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.15
+compileJava.options.encoding = 'UTF-8'
+
+javafx {
+    version = "15.0.1"
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+jlink {
+    launcher {
+        name = 'MainApp'
+    }
+}
+
+mainClassName = 'com.linziniu.MainApp'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile project(":Socket")
+}
+
+
+

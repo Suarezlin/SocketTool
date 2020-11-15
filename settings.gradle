@@ -1,0 +1,3 @@
+rootProject.name = 'SocketTool'
+include 'Socket'
+
