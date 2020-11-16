@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.linziniu.controller.TCPClientPage">
+   <children>
+      <HBox alignment="CENTER_LEFT" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
+         <children>
+            <Label maxHeight="30.0" maxWidth="50.0" minHeight="30.0" minWidth="50.0" prefHeight="30.0" prefWidth="50.0" text="IP 地址" />
+            <JFXTextField fx:id="ip" alignment="CENTER" maxHeight="30.0" minHeight="30.0" minWidth="200.0" prefHeight="30.0" HBox.hgrow="ALWAYS">
+               <font>
+                  <Font size="14.0" />
+               </font></JFXTextField>
+            <Label maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="端口号" />
+            <JFXTextField fx:id="port" alignment="CENTER" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" prefHeight="30.0" prefWidth="80.0" HBox.hgrow="NEVER">
+               <font>
+                  <Font size="14.0" />
+               </font></JFXTextField>
+            <JFXButton fx:id="connect" alignment="CENTER" buttonType="RAISED" defaultButton="true" maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" ripplerFill="WHITE" text="连接" textAlignment="CENTER" />
+            <JFXButton fx:id="disconnect" maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" style="-fx-background-color: red;" text="断开" textAlignment="CENTER" textFill="WHITE" />
+         </children>
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+      <HBox maxHeight="30.0" minHeight="30.0" minWidth="200.0" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <children>
+            <Label maxHeight="30.0" maxWidth="50.0" minHeight="30.0" minWidth="50.0" prefHeight="30.0" prefWidth="50.0" text="消息" />
+            <JFXTextField fx:id="msg" HBox.hgrow="ALWAYS" />
+            <JFXButton fx:id="send" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="发送消息" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+      <TableView fx:id="table" VBox.vgrow="ALWAYS">
+        <columns>
+          <TableColumn prefWidth="75.0" text="状态" />
+          <TableColumn prefWidth="75.0" text="服务器地址" />
+            <TableColumn prefWidth="75.0" text="服务器端口" />
+            <TableColumn prefWidth="75.0" text="客户端地址" />
+            <TableColumn prefWidth="75.0" text="客户端端口" />
+            <TableColumn prefWidth="75.0" text="消息" />
+        </columns>
+         <VBox.margin>
+            <Insets bottom="10.0" top="20.0" />
+         </VBox.margin>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </children>
+   <padding>
+      <Insets left="20.0" right="20.0" top="10.0" />
+   </padding>
+</VBox>

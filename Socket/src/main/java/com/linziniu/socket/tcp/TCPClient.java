@@ -47,6 +47,7 @@ public class TCPClient implements CloseListener {
             } catch (IOException e) {
                 SocketMessage message = SocketMessage.error(serverIp, serverPort, null, -1, e.getMessage());
                 messageListener.onMessageReceive(message);
+                closeListener.onClose();
                 return;
             }
             handler = new ReceiveHandler(socket, this, messageListener);
