@@ -8,6 +8,7 @@ import com.linziniu.socket.utils.TCPUtils;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.CountDownLatch;
 
 public class ReceiveHandler implements Runnable {
 
@@ -31,23 +32,23 @@ public class ReceiveHandler implements Runnable {
             socket.close();
         } catch (IOException ignored) {
         }
-        closeListener.onClose();
+//        closeListener.onClose();
     }
 
     @Override
     public void run() {
-
         while (!done) {
             SocketInfo info = TCPUtils.receive(socket);
             if (info == null) {
+                done = true;
                 closeListener.onClose();
             } else if (info.isStatus()) {
                 SocketMessage message = SocketMessage.success(socket, info.getMsg());
                 messageListener.onMessageReceive(message);
             } else {
-//                SocketMessage message = SocketMessage.error(socket, info.getMsg());
-                close();
-//                messageListener.onMessageReceive(message);
+                done = true;
+                SocketMessage message = SocketMessage.error(socket, info.getMsg());
+                messageListener.onMessageReceive(message);
                 closeListener.onClose();
             }
         }

@@ -10,6 +10,7 @@ import com.linziniu.socket.utils.TCPUtils;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,7 +20,7 @@ public class TCPClient implements CloseListener {
 
     private final int serverPort;
 
-    private volatile boolean status;
+    private volatile boolean started = false;
 
     private volatile ExecutorService receivePool;
 
@@ -39,55 +40,88 @@ public class TCPClient implements CloseListener {
     }
 
     public synchronized void start() {
-        receivePool = Executors.newSingleThreadExecutor();
-        try {
-            socket = new Socket(serverIp, serverPort);
-        } catch (IOException e) {
-            SocketMessage message = SocketMessage.error(serverIp, serverPort, null, -1, e.getMessage());
-            messageListener.onMessageReceive(message);
-            return;
+        if (!started) {
+            receivePool = Executors.newSingleThreadExecutor();
+            try {
+                socket = new Socket(serverIp, serverPort);
+            } catch (IOException e) {
+                SocketMessage message = SocketMessage.error(serverIp, serverPort, null, -1, e.getMessage());
+                messageListener.onMessageReceive(message);
+                return;
+            }
+            handler = new ReceiveHandler(socket, this, messageListener);
+            receivePool.submit(handler);
+            started = true;
         }
-        handler = new ReceiveHandler(socket, this, messageListener);
-        receivePool.submit(handler);
+
     }
 
     public synchronized void stop() {
-        if (handler != null) {
-            handler.close();
+        if (started) {
+            if (handler != null) {
+                handler.close();
+            }
+            if (receivePool != null) {
+                receivePool.shutdown();
+            }
+            TCPUtils.close(socket);
+//            SocketMessage message = SocketMessage.error(socket, "连接关闭");
+//            messageListener.onMessageReceive(message);
+            started = false;
         }
-        onClose();
     }
 
 
 
     public synchronized void send(String msg) {
-        send(msg.getBytes(StandardCharsets.UTF_8));
+        if (started) {
+            send(msg.getBytes(StandardCharsets.UTF_8));
+        }
+
     }
 
     public synchronized void send(byte[] data) {
-        SocketInfo info = TCPUtils.send(socket, data);
-        if (!info.isStatus()) {
-            SocketMessage message = SocketMessage.error(
-                    serverIp,
-                    serverPort,
-                    socket.getInetAddress().toString().substring(1),
-                    socket.getPort(),
-                    info.getMsg()
-            );
-            stop();
-            messageListener.onMessageReceive(message);
-            closeListener.onClose();
+        if (started) {
+            SocketInfo info = TCPUtils.send(socket, data);
+            if (!info.isStatus()) {
+                SocketMessage message = SocketMessage.error(
+                        serverIp,
+                        serverPort,
+                        socket.getInetAddress().toString().substring(1),
+                        socket.getPort(),
+                        info.getMsg()
+                );
+                stop();
+                messageListener.onMessageReceive(message);
+                closeListener.onClose();
+            }
         }
     }
 
     @Override
     public void onClose() {
-        if (receivePool != null) {
-            receivePool.shutdown();
+        if (started) {
+            if (receivePool != null) {
+                receivePool.shutdown();
+            }
+            TCPUtils.close(socket);
+            SocketMessage message = SocketMessage.error(socket, "连接关闭");
+            messageListener.onMessageReceive(message);
+            closeListener.onClose();
+            started = false;
         }
-        TCPUtils.close(socket);
-        SocketMessage message = SocketMessage.error(socket, "连接关闭");
-        messageListener.onMessageReceive(message);
-        closeListener.onClose();
+    }
+
+    public static void main(String[] args) throws IOException {
+        CloseListener closeListener = () -> {};
+        MessageListener messageListener = message -> {
+            System.out.printf("[%s]%s:%d -> %s:%d: %s\n",message.isSuccess() ? "成功" : "失败", message.getClientIp(), message.getClientPort(), message.getServerIp(), message.getServerPort(), message.getMsg());
+        };
+        TCPClient client = new TCPClient("127.0.0.1", 4567, messageListener, closeListener);
+        client.start();
+        client.send("Hello World!");
+        System.in.read();
+        client.stop();
+        System.out.println("客户端退出");
     }
 }

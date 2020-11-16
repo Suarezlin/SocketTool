@@ -34,8 +34,14 @@ public class TCPUtils {
     }
 
     public static SocketInfo receive(Socket socket) {
+        BufferedInputStream inputStream = null;
         try {
-            BufferedInputStream inputStream = new BufferedInputStream(socket.getInputStream());
+            inputStream = new BufferedInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            return SocketInfo.error(e.getMessage());
+        }
+        try {
+
             byte[] buffer = new byte[512];
             int length = 0;
             StringBuilder stringBuilder = new StringBuilder();
@@ -46,7 +52,7 @@ public class TCPUtils {
             }
             return SocketInfo.success(stringBuilder.toString());
         } catch (IOException e) {
-            return SocketInfo.success(e.getMessage());
+            return null;
         }
     }
 
