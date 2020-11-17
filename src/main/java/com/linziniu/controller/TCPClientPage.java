@@ -1,8 +1,6 @@
 package com.linziniu.controller;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXTextField;
+
 import com.linziniu.socket.listener.CloseListener;
 import com.linziniu.socket.listener.MessageListener;
 import com.linziniu.socket.model.SocketMessage;
@@ -24,22 +22,22 @@ import java.util.ResourceBundle;
 public class TCPClientPage implements Initializable, CloseListener, MessageListener {
 
     @FXML
-    public JFXButton connect;
+    public Button connect;
 
     @FXML
-    public JFXButton disconnect;
+    public Button disconnect;
 
     @FXML
-    public JFXTextField ip;
+    public TextField ip;
 
     @FXML
-    public JFXTextField port;
+    public TextField port;
 
     @FXML
-    public JFXTextField msg;
+    public TextField msg;
 
     @FXML
-    public JFXButton send;
+    public Button send;
 
     @FXML
     public TableView<SocketMessage> table;

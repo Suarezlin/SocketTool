@@ -1,28 +1,19 @@
+@font-face {
+    src: url('fonts/PingFang-SC-Regular.ttf');
+}
+
 /*@font-face {*/
-/*    src: url('fonts/PingFang-SC-Regular.ttf')*/
+/*    src: url("fonts/YaHei.ttf");*/
 /*}*/
 
-/*@font-face {*/
-/*    src: url('fonts/YaHei.ttf')*/
+.root {
+    -fx-font-family: 'PingFang SC', sans-serif;
+    -fx-font-size: 15;
+}
+
+/*.button {*/
+/*    -fx-font-family: 'Microsoft Yahei', serif;*/
+/*    -fx-font-size: 14;*/
 /*}*/
 
-.label {
-    -fx-font-family: 'Microsoft Yahei', serif;
-    -fx-font-size: 14;
-}
 
-.button {
-    -fx-font-family: 'Microsoft Yahei', serif;
-    -fx-font-size: 14;
-}
-
-.jfx-button {
-    -jfx-button-type: RAISED;
-    -fx-background-color: #00a6ff;
-    -fx-text-fill: white;
-}
-
-.jfx-tab-pane .tab-header-background
-{
-    -fx-background-color: #00a6ff;
-}

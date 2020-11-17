@@ -13,7 +13,7 @@ repositories {
     maven { url 'https://maven.aliyun.com/repository/central' }
 }
 
-sourceCompatibility = 1.15
+sourceCompatibility = 1.13
 compileJava.options.encoding = 'UTF-8'
 
 javafx {
@@ -32,18 +32,14 @@ mainClassName = 'com.linziniu.MainApp'
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile project(":Socket")
-    compile 'com.jfoenix:jfoenix:9.0.10'
     implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'org.jfxtras:jmetro:11.6.12'
+    implementation 'org.jfxtras:jfxtras-font-roboto:9.0-r1'
 }
 
 run {
    jvmArgs = [
-        "--add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=com.jfoenix",
-        "--add-exports=javafx.controls/com.sun.javafx.scene.control=com.jfoenix",
-        "--add-exports=javafx.base/com.sun.javafx.binding=com.jfoenix",
-        "--add-exports=javafx.graphics/com.sun.javafx.stage=com.jfoenix",
-        "--add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=com.jfoenix",
-           "--add-opens=java.base/java.lang.reflect=com.jfoenix"
+           "-Dfile.encoding=UTF-8"
     ]
 }
 
