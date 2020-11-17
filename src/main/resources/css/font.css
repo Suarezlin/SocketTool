@@ -1,5 +1,5 @@
 @font-face {
-    src: url('fonts/PingFang-SC-Regular.ttf');
+    src: url('../fonts/PingFang-SC-Regular.ttf');
 }
 
 /*@font-face {*/
@@ -7,8 +7,8 @@
 /*}*/
 
 .root {
-    -fx-font-family: 'PingFang SC', sans-serif;
-    -fx-font-size: 15;
+    -fx-font-family: 'PingFangSC-Regular', sans-serif;
+    -fx-font-size: 13;
 }
 
 /*.button {*/
@@ -17,3 +17,16 @@
 /*}*/
 
 
+#disconnect {
+    -fx-background-color: red;
+    -fx-text-fill: white;
+}
+
+.table-view {
+    -fx-font-size: 12;
+}
+
+.table-column {
+    -fx-padding: 0 0 0 0;
+    -fx-label-padding: 0 0 0 0;
+}

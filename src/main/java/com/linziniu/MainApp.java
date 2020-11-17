@@ -17,19 +17,16 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Socket 测试工具");
-        Font font = Font.loadFont(getClass().getResource("/fonts/YaHei.ttf").toExternalForm(), 14);
-        System.out.println(font);
-        Font.loadFont(getClass().getResource("/fonts/PingFang-SC-Regular.ttf").toExternalForm(), 14);
+//        Font font = Font.loadFont(getClass().getResource("/fonts/YaHei.ttf").toExternalForm(), 14);
+//        Font.loadFont(getClass().getResource("/fonts/PingFang-SC-Regular.ttf").toExternalForm(), 14);
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/AppUI.fxml"));
         JFXtrasFontRoboto.loadAll();
         Scene scene = new Scene(root);
-        for (String fontFamily : Font.getFamilies()) {
-            System.out.println(fontFamily);
-        }
+        scene.getStylesheets().add(getClass().getResource("/css/font.css").toExternalForm());
         JMetro jmetro = new JMetro(Style.LIGHT);
-//        scene.getStylesheets().add(getClass().getResource("/css/font.css").toExternalForm());
         jmetro.setScene(scene);
-        jmetro.getOverridingStylesheets().addAll(getClass().getResource("/css/font.css").toExternalForm());
+//        jmetro.getOverridingStylesheets().addAll(getClass().getResource("/css/font.css").toExternalForm());
+        jmetro.setAutomaticallyColorPanes(true);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(600);

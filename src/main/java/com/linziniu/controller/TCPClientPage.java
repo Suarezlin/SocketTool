@@ -34,7 +34,7 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
     public TextField port;
 
     @FXML
-    public TextField msg;
+    public TextArea msg;
 
     @FXML
     public Button send;
@@ -102,6 +102,7 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
             send.setDisable(true);
         });
         send.setOnAction(event -> client.send(msg.getText()));
+
     }
 
     @Override
