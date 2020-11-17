@@ -2,13 +2,17 @@
     src: url('../fonts/PingFang-SC-Regular.ttf');
 }
 
-/*@font-face {*/
-/*    src: url("fonts/YaHei.ttf");*/
-/*}*/
+@font-face {
+    src: url("../fonts/YaHei.ttf");
+}
 
 .root {
-    -fx-font-family: 'PingFangSC-Regular', sans-serif;
-    -fx-font-size: 13;
+    -fx-font-family: 'PingFang SC', sans-serif;
+    -fx-font-size: 14;
+}
+
+.button {
+    -fx-font-size: 12;
 }
 
 /*.button {*/
@@ -22,11 +26,17 @@
     -fx-text-fill: white;
 }
 
-.table-view {
+.table-view .column-header .label{
+    -fx-alignment: center;
+    -fx-font-family: "Microsoft YaHei";
     -fx-font-size: 12;
 }
 
+.table-row-cell{
+    -fx-font-size: 12;
+    -fx-alignment: center;
+}
+
 .table-column {
-    -fx-padding: 0 0 0 0;
-    -fx-label-padding: 0 0 0 0;
+    -fx-alignment: center;
 }

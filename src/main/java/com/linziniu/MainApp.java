@@ -7,7 +7,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import jfxtras.resources.JFXtrasFontRoboto;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
@@ -17,16 +16,15 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Socket 测试工具");
-//        Font font = Font.loadFont(getClass().getResource("/fonts/YaHei.ttf").toExternalForm(), 14);
-//        Font.loadFont(getClass().getResource("/fonts/PingFang-SC-Regular.ttf").toExternalForm(), 14);
+        Font font = Font.loadFont(getClass().getResource("/fonts/YaHei.ttf").toExternalForm(), 14);
+        Font.loadFont(getClass().getResource("/fonts/PingFang-SC-Regular.ttf").toExternalForm(), 14);
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/AppUI.fxml"));
-        JFXtrasFontRoboto.loadAll();
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/css/light_theme.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/font.css").toExternalForm());
-        JMetro jmetro = new JMetro(Style.LIGHT);
-        jmetro.setScene(scene);
+//        JMetro jmetro = new JMetro(Style.LIGHT);
+//        jmetro.setScene(scene);
 //        jmetro.getOverridingStylesheets().addAll(getClass().getResource("/css/font.css").toExternalForm());
-        jmetro.setAutomaticallyColorPanes(true);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(600);

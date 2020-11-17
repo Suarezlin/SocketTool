@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.linziniu.controller.TCPClientPage">
    <children>
       <HBox alignment="CENTER_LEFT" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
-            <Label maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" text="IP Address" />
+            <Label maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" text="IP 地址" />
             <TextField fx:id="ip" alignment="CENTER_LEFT" maxHeight="30.0" minHeight="30.0" minWidth="200.0" prefHeight="30.0" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-            <Label maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="Port" />
+            <Label maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="端口" />
             <TextField fx:id="port" alignment="CENTER" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" prefHeight="30.0" prefWidth="80.0" HBox.hgrow="NEVER">
                <font>
                   <Font size="14.0" />
                </font></TextField>
-            <Button fx:id="connect" alignment="CENTER" defaultButton="true" maxHeight="30.0" maxWidth="90.0" minHeight="30.0" minWidth="90.0" prefHeight="30.0" prefWidth="90.0" text="Connect" textAlignment="CENTER">
+            <Button fx:id="connect" alignment="CENTER" defaultButton="true" maxHeight="30.0" maxWidth="90.0" minHeight="30.0" minWidth="90.0" prefHeight="30.0" prefWidth="90.0" text="连接" textAlignment="CENTER">
                </Button>
-            <Button fx:id="disconnect" maxHeight="30.0" maxWidth="90.0" minHeight="30.0" minWidth="90.0" prefHeight="30.0" prefWidth="90.0" text="Disconnect" textAlignment="CENTER">
+            <Button fx:id="disconnect" maxHeight="30.0" maxWidth="90.0" minHeight="30.0" minWidth="90.0" prefHeight="30.0" prefWidth="90.0" text="断开" textAlignment="CENTER">
                <font>
                   <Font size="14.0" />
                </font></Button>
@@ -33,27 +38,64 @@
             <Insets bottom="10.0" top="10.0" />
          </padding>
       </HBox>
-      <HBox minWidth="200.0" spacing="5.0" VBox.vgrow="ALWAYS">
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
+      <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
          <children>
-            <Label maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" text="Message" />
-            <TextArea fx:id="msg" maxHeight="200.0" minHeight="60.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="send" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="Send" />
+            <HBox fx:id="text" minWidth="200.0" spacing="5.0" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <children>
+                  <Label maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" text="消息" />
+                  <TextArea fx:id="msg" maxHeight="200.0" minHeight="60.0" HBox.hgrow="ALWAYS" />
+                  <VBox maxWidth="100.0" minWidth="100.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="send" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="发送" />
+                        <Button fx:id="timedSend" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="定时发送" />
+                        <Button fx:id="switchToByte" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="字节发送" textAlignment="CENTER" />
+                        <Button fx:id="clear" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="清除所有消息" textAlignment="CENTER" />
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </HBox>
+            <HBox fx:id="bytes" minWidth="200.0" spacing="5.0">
+               <children>
+                  <Label maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" text="消息" />
+                  <VBox alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="16 进制" />
+                        <TextArea fx:id="hexArea" maxHeight="200.0" minHeight="60.0" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER_LEFT" spacing="5.0">
+                     <children>
+                        <Label text="字符" />
+                        <TextArea fx:id="charArea" maxHeight="200.0" minHeight="60.0" />
+                     </children>
+                  </VBox>
+                  <VBox maxWidth="100.0" minWidth="100.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="byteSend" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="发送" />
+                        <Button fx:id="byteTimedSend" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="定时发送" />
+                        <Button fx:id="switchToText" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="文本发送" textAlignment="CENTER" />
+                        <Button fx:id="byteClear" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="清除所有消息" textAlignment="CENTER" />
+                     </children>
+                     <HBox.margin>
+                        <Insets top="22.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </HBox>
          </children>
-         <padding>
-            <Insets bottom="10.0" top="10.0" />
-         </padding>
-      </HBox>
+      </VBox>
       <TableView fx:id="table" VBox.vgrow="ALWAYS">
         <columns>
-          <TableColumn maxWidth="80.0" minWidth="80.0" text="Status" />
-          <TableColumn maxWidth="120.0" minWidth="120.0" prefWidth="120.0" text="Server IP" />
-            <TableColumn maxWidth="80.0" minWidth="80.0" text="Server Port" />
-            <TableColumn prefWidth="120.0" text="Client IP" />
-            <TableColumn prefWidth="100.0" text="Client Port" />
-            <TableColumn prefWidth="259.0" text="Received Message" />
+
         </columns>
          <VBox.margin>
             <Insets bottom="10.0" />
