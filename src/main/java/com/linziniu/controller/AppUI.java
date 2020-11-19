@@ -16,7 +16,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import jfxtras.styles.jmetro.JMetroStyleClass;
+//import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,7 +31,7 @@ public class AppUI implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        tabPane.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+//        tabPane.getStyleClass().add(JMetroStyleClass.BACKGROUND);
     }
 
     public void test() {

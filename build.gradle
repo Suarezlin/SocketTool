@@ -2,18 +2,26 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
-    id 'org.beryx.jlink' version '2.16.4'
+    id 'org.beryx.jlink' version '2.22.3'
 }
 
 group 'com.linziniu'
-version '1.0-SNAPSHOT'
+version = '0.0.1'
+
+ext {
+    appName = "SocketTool"
+    appLauncher = "MainApp"
+    appPackaging = "com.linziniu"
+    appModuleName = "com.linziniu"
+    appMainClass = "com.linziniu.MainApp"
+}
 
 repositories {
 //    mavenCentral()
     maven { url 'https://maven.aliyun.com/repository/central' }
 }
 
-sourceCompatibility = 1.15
+sourceCompatibility = 15
 compileJava.options.encoding = 'UTF-8'
 
 javafx {
@@ -21,20 +29,33 @@ javafx {
     modules = ['javafx.controls', 'javafx.fxml']
 }
 
+mainClassName = 'com.linziniu/com.linziniu.MainApp'
+
 jlink {
+    imageZip = project.file("${buildDir}/distributions/${appPackaging}-${javafx.platform.classifier}.zip")
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
-        name = 'MainApp'
+        name = "MainApp"
+        noConsole = true
+    }
+
+    jpackage {
+        appVersion = '1.0.0'
+        if(os.windows) {
+            installerOptions = ['--win-per-user-install', '--win-dir-chooser', '--win-menu']
+        }
     }
 }
 
-mainClassName = 'com.linziniu.MainApp'
+
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile project(":Socket")
+
+//    implementation 'org.jfxtras:jmetro:11.6.12'
     implementation 'org.apache.commons:commons-lang3:3.11'
-    implementation 'org.jfxtras:jmetro:11.6.12'
-    implementation 'org.jfxtras:jfxtras-font-roboto:9.0-r1'
+//    implementation 'org.controlsfx:controlsfx:11.0.3'
 }
 
 run {
