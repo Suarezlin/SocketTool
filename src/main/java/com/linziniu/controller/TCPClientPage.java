@@ -6,25 +6,48 @@ import com.linziniu.socket.listener.CloseListener;
 import com.linziniu.socket.listener.MessageListener;
 import com.linziniu.socket.model.SocketMessage;
 import com.linziniu.socket.tcp.TCPClient;
+import com.linziniu.utils.HexUtils;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class TCPClientPage implements Initializable, CloseListener, MessageListener {
+
+    @FXML
+    public VBox parent;
 
     @FXML
     public Button connect;
@@ -45,7 +68,7 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
     public Button send;
 
     @FXML
-    public Button timedSend;
+    public ToggleButton timedSend;
 
     @FXML
     public Button switchToByte;
@@ -57,7 +80,7 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
     public Button byteSend;
 
     @FXML
-    public Button byteTimedSend;
+    public ToggleButton byteTimedSend;
 
     @FXML
     public Button switchToText;
@@ -69,7 +92,7 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
     public HBox text;
 
     @FXML
-    public HBox bytes;
+    public VBox bytes;
 
     @FXML
     public TextArea hexArea;
@@ -80,7 +103,30 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
     @FXML
     public TableView<SocketMessageModel> table;
 
+    @FXML
+    public VBox areas;
+
+    @FXML
+    public Button importButton;
+
+    @FXML
+    public Label message;
+
+    @FXML
+    public Label textMessage;
+
+    @FXML
+    public TextField timePeriod;
+
+    @FXML
+    public TextField byteTimePeriod;
+
+    @FXML
+    public Button exportButton;
+
     private TCPClient client;
+
+    private ScheduledExecutorService pool;
 
     private boolean isText = true;
 
@@ -96,28 +142,78 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
         byteSend.disableProperty().bind(isConnected.not());
         timedSend.disableProperty().bind(isConnected.not());
         byteTimedSend.disableProperty().bind(isConnected.not());
+        timePeriod.disableProperty().bind(isConnected.not());
+        byteTimePeriod.disableProperty().bind(isConnected.not());
+
+        clear.setOnAction(event -> clear());
+        byteClear.setOnAction(event -> clear());
+        importButton.setOnAction(event -> importData());
 
         hexArea.textProperty().addListener(new HexListener());
+        exportButton.setOnAction(event -> export());
 
-        port.textProperty().addListener(new ChangeListener<String>() {
+        byteSend.setOnAction(event -> byteSend());
+        table.setFixedCellSize(50);
 
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    port.setText(newValue.replaceAll("[^\\d]", ""));
-                }
+        message.setOnMouseClicked(event -> {
+            Stage infoStage = new Stage();
 
-                try {
-                    int value = Integer.parseInt(port.getText());
-                    if (value <= 0 || value > 65535) {
-                        port.setText(oldValue);
-                    }
-                } catch (Exception ignored) {}
+            Label label = new Label();
+            label.setWrapText(true);
+            label.setText(message.getText());
 
-            }
+//            System.out.println(message.getText());
+            AnchorPane pane = new AnchorPane(label);
+//            label.setPrefWidth(400);
+//            label.setPrefHeight(300);
+            label.setPadding(new Insets(10, 10, 10, 10));
+            infoStage.setTitle("详细信息");
+            Scene scene = new Scene(pane);
+            scene.getStylesheets().add(getClass().getResource("/css/font.css").toExternalForm());
+            infoStage.setScene(scene);
+            infoStage.show();
         });
+
+//        bytes.widthProperty().addListener(new SizeListener());
+
+
+        limitNumber(port, true);
+        limitNumber(timePeriod, false);
+        limitNumber(byteTimePeriod, false);
         text.managedProperty().bind(text.visibleProperty());
         bytes.managedProperty().bind(bytes.visibleProperty());
+
+        timedSend.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (newValue) {
+                    System.out.println("开始发送");
+
+                    pool = Executors.newScheduledThreadPool(1);
+
+                    long period;
+                    if (StringUtils.isEmpty(timePeriod.getText())) {
+                        period = 1000;
+                    } else {
+                        period = Long.parseLong(timePeriod.getText());
+                    }
+
+                    Runnable runnable = () -> {
+                        client.send(msg.getText());
+                    };
+                    pool.scheduleAtFixedRate(runnable, 0, period, TimeUnit.MILLISECONDS);
+                    textMessage.setTextFill(Paint.valueOf("green"));
+                    textMessage.setText("开始定时发送，发送间隔 " + period + " 毫秒");
+                } else {
+                    if (oldValue) {
+                        pool.shutdownNow();
+                        textMessage.setTextFill(Paint.valueOf("red"));
+                        textMessage.setText("停止定时发送");
+                    }
+
+                }
+            }
+        });
 
         bytes.setVisible(false);
 
@@ -142,12 +238,30 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
 //            connect.setDisable(true);
 //            disconnect.setDisable(false);
 //            send.setDisable(false);
-            client.start();
+            boolean status = client.start();
+
+            if (status) {
+                textMessage.setTextFill(Paint.valueOf("green"));
+                textMessage.setText("连接成功");
+            } else {
+                textMessage.setTextFill(Paint.valueOf("red"));
+                textMessage.setText("连接失败");
+            }
+
+            parent.getScene().getWindow().addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, ev -> {
+                if (isConnected.get()) {
+                    client.stop();
+                    timedSend.setSelected(false);
+                    byteTimedSend.setSelected(false);
+                }
+            });
+
         });
         disconnect.setOnAction(event -> {
-            System.out.println("断开连接");
             client.stop();
             isConnected.set(false);
+            timedSend.setSelected(false);
+            byteTimedSend.setSelected(false);
 //            connect.setDisable(false);
 //            disconnect.setDisable(true);
 //            send.setDisable(true);
@@ -156,6 +270,32 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
 
         switchToByte.setOnAction(event -> switchTextAndByte());
         switchToText.setOnAction(event -> switchTextAndByte());
+
+        table.setRowFactory(tv -> {
+            TableRow<SocketMessageModel> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    SocketMessageModel model = row.getItem();
+                    MessageDetail messageDetail = new MessageDetail(model);
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MessageDetail.fxml"));
+                    loader.setController(messageDetail);
+                    Stage stage = new Stage();
+                    stage.setMinHeight(450);
+                    stage.setMinWidth(300);
+                    try {
+                        Scene scene = new Scene(loader.load());
+                        scene.getStylesheets().add(getClass().getResource("/css/light_theme.css").toExternalForm());
+                        scene.getStylesheets().add(getClass().getResource("/css/font.css").toExternalForm());
+                        stage.setScene(scene);
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+//                    System.out.println(model);
+                }
+            });
+            return row;
+        });
 
         List<String> columns = Arrays.asList("success", "serverIp", "serverPort", "clientIp", "clientPort", "msg");
 
@@ -172,13 +312,16 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
                     protected void updateItem(String item, boolean empty) {
                         if (!empty) {
                             if ("失败".equals(item)) {
-                                setStyle("-fx-background-color: red; -fx-text-fill: white");
+//                                setTextFill(Paint.valueOf("red"));
+                                setStyle("-fx-text-fill: red");
                             } else {
-                                setStyle("-fx-background-color: #00ca00; -fx-text-fill: white");
+//                                setTextFill(Paint.valueOf("green"));
+                                setStyle("-fx-text-fill: green");
                             }
 //                            setStyle("-fx-text-fill: white");
                             setText(item);
                         } else {
+//                            setTextFill(Paint.valueOf("black"));
                             setStyle("-fx-background-color: white; -fx-text-fill: black");
                             setText("");
                         }
@@ -223,15 +366,37 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
 
     }
 
-    @Override
-    public void onClose() {
-        connect.setDisable(false);
-        disconnect.setDisable(true);
-        send.setDisable(true);
+    private void limitNumber(TextField field, boolean flag) {
+        field.textProperty().addListener(new ChangeListener<String>() {
+
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    field.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+                if (flag) {
+                    try {
+                        int value = Integer.parseInt(field.getText());
+                        if (value <= 0 || value > 65535) {
+                            field.setText(oldValue);
+                        }
+                    } catch (Exception ignored) {}
+                }
+
+
+            }
+        });
     }
 
     @Override
-    public void onMessageReceive(SocketMessage message) {
+    public void onClose() {
+        isConnected.set(false);
+        timedSend.setSelected(false);
+        byteTimedSend.setSelected(false);
+    }
+
+    @Override
+    public synchronized void onMessageReceive(SocketMessage message) {
         System.out.printf("[%s]%s:%d -> %s:%d: %s\n",message.isSuccess() ? "成功" : "失败", message.getClientIp(), message.getClientPort(), message.getServerIp(), message.getServerPort(), message.getMsg());
         table.getItems().add(new SocketMessageModel(message));
     }
@@ -240,88 +405,92 @@ public class TCPClientPage implements Initializable, CloseListener, MessageListe
         this.isText = !isText;
         text.setVisible(isText);
         bytes.setVisible(!isText);
+
+//        if (!isText) {
+//            String msg = this.msg.getText();
+//            hexArea.setText(HexUtils.str2HexStr(msg));
+//        } else {
+//            String hex = hexArea.getText().replace(" ", "");
+//            this.msg.setText(HexUtils.hexStr2Str(hex));
+//        }
     }
 
     public void textSend() {
         client.send(msg.getText());
     }
 
+    public void byteSend() {
+        client.send(HexUtils.hexStr2Bytes(hexArea.getText().replace(" ", "")));
+    }
+
     private class HexListener implements ChangeListener<String> {
 
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-//            char input = newValue.charAt(newValue.length() - 1);
-
-//            if ((input >= 'a' && input <= 'f')) {
-//                newValue = newValue.substring(0, newValue.length() - 1) + (char)(input + ('A' - 'a'));
-//                hexArea.setText(newValue);
-//            }
-
-
             String pattern = "([0-9a-fA-F]{1,2}\\s)*([0-9a-fA-F]{1,2}\\s?$)?";
             if (!newValue.matches(pattern)) {
                 hexArea.setText(oldValue);
-            }
+            } else {
+                String msg = HexUtils.hexStr2Str(hexArea.getText().replace(" ", ""));
+                System.out.println(msg);
+                StringBuffer buffer = new StringBuffer();
+                for (int i = 0; i < msg.length(); i++) {
+                    if (msg.charAt(i) >= 32 && msg.charAt(i) <= 126) {
+                        buffer.append(msg.charAt(i));
+                    } else {
+                        buffer.append('.');
+                    }
 
-//            if (oldValue.equals(newValue)) {
-//                return;
-//            }
-//
-//            System.out.printf("[%s] [%s]\n", oldValue, newValue);
-//
-//            if (oldValue.length() > newValue.length()) {
-//                int i;
-//                for (i = 0; i < newValue.length(); i++) {
-//                    if (newValue.charAt(i) != oldValue.charAt(i)) {
-//                        break;
-//                    }
-//                }
-//                char input = oldValue.charAt(i);
-//                System.out.println(input);
-//                if (oldValue.charAt(i) == ' ') {
-//                    newValue = oldValue.substring(0, i-1) + oldValue.substring(i+1);
-////                    System.out.println(newValue);
-//                }
-//            } else {
-//                int i;
-//                for (i = 0; i < oldValue.length(); i++) {
-//                    if (newValue.charAt(i) != oldValue.charAt(i)) {
-//                        break;
-//                    }
-//                }
-////                if (i == oldValue.length()) {
-////                    return;
-////                }
-//                char input = newValue.charAt(i);
-//                if ((input >= '0' && input <= '9') || (input >= 'a' && input <= 'f') || (input >= 'A' && input <= 'F') || input == ' ') {
-//
-//                } else {
-//                    hexArea.setText(oldValue);
-//                    return;
-//                }
-//            }
-//
-//
-//
-//            StringBuffer buffer = new StringBuffer();
-//            String temp = newValue.replace(" ", "");
-//            int i;
-//            for (i = 0; i < temp.length() - 1; i += 2) {
-//                buffer.append(temp, i, i + 2);
-//                buffer.append(" ");
-//            }
-//
-//            if (i == temp.length() - 1) {
-//                buffer.append(temp.charAt(temp.length() - 1));
-//            }
-////            System.out.printf("[%s] [%s] [%s]\n", oldValue, newValue, buffer.toString());
-////            if (newValue.equals(buffer.toString()) || oldValue.equals(buffer.toString())) {
-////                return;
-////            }
-//            hexArea.setText(buffer.toString().trim());
-//        }
+                    buffer.append("  ");
+                }
+                charArea.setText(buffer.toString());
+            }
         }
     }
 
+    private void clear() {
+        table.getItems().clear();
+    }
+
+    private void importData() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("选择要导入的文件");
+
+        File file = fileChooser.showOpenDialog(parent.getScene().getWindow());
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            byte[] bytes = fileInputStream.readAllBytes();
+            String msg = HexUtils.byte2HexStr(bytes);
+//            System.out.println(msg);
+            StringBuilder buffer = new StringBuilder();
+            int i;
+            for (i = 0; i < msg.length() - 1; i += 2) {
+                buffer.append(msg, i, i + 2);
+                buffer.append(" ");
+            }
+            if (i == msg.length() - 1) {
+                buffer.append(msg.charAt(msg.length() - 1));
+            }
+            hexArea.setText(buffer.toString());
+            message.setStyle("-fx-text-fill: green; -fx-font-size: 12");
+            message.setText("导入文件成功 " + file.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+            message.setStyle("-fx-text-fill: red; -fx-font-size: 12");
+            message.setText("导入文件失败 " + file.getAbsolutePath() + ", " + e.getMessage());
+        }
+
+//        System.out.println(file.getAbsolutePath());
+    }
+
+    private void export() {
+        String msg = hexArea.getText().replace(" ", "");
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(HexUtils.hexStr2Str(msg));
+        clipboard.setContent(content);
+        message.setStyle("-fx-text-fill: green; -fx-font-size: 12");
+        message.setText("成功导出字符串到剪贴板");
+    }
 
 }

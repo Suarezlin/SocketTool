@@ -6,12 +6,20 @@
     src: url("../fonts/YaHei.ttf");
 }
 
+@font-face {
+    src: url("../fonts/consola.ttf");
+}
+
 .root {
     -fx-font-family: 'PingFang SC', sans-serif;
     -fx-font-size: 14;
 }
 
 .button {
+    -fx-font-size: 12;
+}
+
+.toggle-button {
     -fx-font-size: 12;
 }
 
@@ -39,4 +47,12 @@
 
 .table-column {
     -fx-alignment: center;
+}
+
+.consolas {
+    -fx-font-family: Consolas;
+}
+
+.send {
+    -fx-font-size: 12;
 }

@@ -6,11 +6,12 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.linziniu.controller.TCPClientPage">
+<VBox fx:id="parent" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.linziniu.controller.TCPClientPage">
    <children>
       <HBox alignment="CENTER_LEFT" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
@@ -20,7 +21,7 @@
                   <Font size="14.0" />
                </font></TextField>
             <Label maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="端口" />
-            <TextField fx:id="port" alignment="CENTER" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" prefHeight="30.0" prefWidth="80.0" HBox.hgrow="NEVER">
+            <TextField fx:id="port" alignment="CENTER_LEFT" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" prefHeight="30.0" prefWidth="80.0" HBox.hgrow="NEVER">
                <font>
                   <Font size="14.0" />
                </font></TextField>
@@ -40,57 +41,90 @@
       </HBox>
       <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
          <children>
-            <HBox fx:id="text" minWidth="200.0" spacing="5.0" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
+            <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Label maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" text="消息" />
-                  <TextArea fx:id="msg" maxHeight="200.0" minHeight="60.0" HBox.hgrow="ALWAYS" />
-                  <VBox maxWidth="100.0" minWidth="100.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                  <HBox fx:id="text" minWidth="200.0" spacing="5.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
                      <children>
-                        <Button fx:id="send" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="发送" />
-                        <Button fx:id="timedSend" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="定时发送" />
-                        <Button fx:id="switchToByte" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="字节发送" textAlignment="CENTER" />
-                        <Button fx:id="clear" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="清除所有消息" textAlignment="CENTER" />
+                        <Label maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" text="消息" />
+                        <TextArea fx:id="msg" maxHeight="200.0" minHeight="60.0" HBox.hgrow="ALWAYS" />
+                        <VBox maxWidth="100.0" minWidth="100.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="send" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="发送" />
+                              <TextField fx:id="timePeriod" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="发送周期(毫秒)" styleClass="send" />
+                              <ToggleButton fx:id="timedSend" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="定时发送" />
+                              <Button fx:id="switchToByte" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="字节发送" textAlignment="CENTER" />
+                              <Button fx:id="clear" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="清除所有消息" textAlignment="CENTER" />
+                           </children>
+                        </VBox>
                      </children>
-                  </VBox>
+                     <padding>
+                        <Insets bottom="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="textMessage" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
+                     </children>
+                     <padding>
+                        <Insets left="65.0" />
+                     </padding>
+                  </HBox>
                </children>
-               <padding>
-                  <Insets bottom="10.0" top="10.0" />
-               </padding>
-            </HBox>
-            <HBox fx:id="bytes" minWidth="200.0" spacing="5.0">
+            </VBox>
+            <VBox fx:id="bytes" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Label maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" text="消息" />
-                  <VBox alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="ALWAYS">
+                  <HBox minWidth="200.0" spacing="5.0">
                      <children>
-                        <Label text="16 进制" />
-                        <TextArea fx:id="hexArea" maxHeight="200.0" minHeight="60.0" />
+                        <Label maxHeight="30.0" maxWidth="60.0" minHeight="30.0" minWidth="60.0" prefHeight="30.0" prefWidth="60.0" text="消息" />
+                        <VBox fx:id="areas" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="16 进制" />
+                              <TextArea fx:id="hexArea" maxHeight="200.0" minHeight="60.0" styleClass="consolas" wrapText="true" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="字符" />
+                              <TextArea fx:id="charArea" editable="false" maxHeight="200.0" minHeight="60.0" styleClass="consolas" wrapText="true" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                        <VBox maxWidth="100.0" minWidth="100.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Button fx:id="byteSend" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="发送" />
+                              <TextField fx:id="byteTimePeriod" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" promptText="发送周期(毫秒)" styleClass="send" />
+                              <ToggleButton fx:id="byteTimedSend" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="定时发送" />
+                              <Button fx:id="switchToText" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="文本发送" textAlignment="CENTER" />
+                              <Button fx:id="byteClear" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="清除所有消息" textAlignment="CENTER" />
+                           </children>
+                           <HBox.margin>
+                              <Insets top="22.0" />
+                           </HBox.margin>
+                        </VBox>
                      </children>
-                  </VBox>
-                  <VBox alignment="CENTER_LEFT" spacing="5.0">
+                     <padding>
+                        <Insets bottom="5.0" top="10.0" />
+                     </padding>
+                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                        <Label text="字符" />
-                        <TextArea fx:id="charArea" maxHeight="200.0" minHeight="60.0" />
+                        <Button maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="字节工具" />
+                        <Button fx:id="importButton" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="导入文件">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="exportButton" maxHeight="30.0" maxWidth="80.0" minHeight="30.0" minWidth="80.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="导出字符" />
+                        <Label fx:id="message" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" />
                      </children>
-                  </VBox>
-                  <VBox maxWidth="100.0" minWidth="100.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <Button fx:id="byteSend" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="发送" />
-                        <Button fx:id="byteTimedSend" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="定时发送" />
-                        <Button fx:id="switchToText" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="文本发送" textAlignment="CENTER" />
-                        <Button fx:id="byteClear" maxHeight="30.0" maxWidth="100.0" minHeight="30.0" minWidth="100.0" prefHeight="30.0" prefWidth="100.0" text="清除所有消息" textAlignment="CENTER" />
-                     </children>
-                     <HBox.margin>
-                        <Insets top="22.0" />
-                     </HBox.margin>
-                  </VBox>
+                     <padding>
+                        <Insets left="65.0" />
+                     </padding>
+                  </HBox>
                </children>
-               <padding>
-                  <Insets bottom="10.0" top="10.0" />
-               </padding>
-            </HBox>
+            </VBox>
          </children>
       </VBox>
       <TableView fx:id="table" VBox.vgrow="ALWAYS">

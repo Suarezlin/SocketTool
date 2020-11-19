@@ -8,5 +8,5 @@ module com.linziniu {
 
     opens com.linziniu to javafx.fxml, javafx.controls, javafx.graphics;
     opens com.linziniu.controller to javafx.fxml, javafx.controls, javafx.graphics;
-    opens com.linziniu.model to javafx.fxml, javafx.controls;
+    opens com.linziniu.model to javafx.base, javafx.controls;
 }

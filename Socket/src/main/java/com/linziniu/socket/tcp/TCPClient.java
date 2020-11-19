@@ -39,7 +39,7 @@ public class TCPClient implements CloseListener {
         this.closeListener = closeListener;
     }
 
-    public synchronized void start() {
+    public synchronized boolean start() {
         if (!started) {
             receivePool = Executors.newSingleThreadExecutor();
             try {
@@ -48,13 +48,16 @@ public class TCPClient implements CloseListener {
                 SocketMessage message = SocketMessage.error(serverIp, serverPort, null, -1, e.getMessage());
                 messageListener.onMessageReceive(message);
                 closeListener.onClose();
-                return;
+                return false;
             }
             handler = new ReceiveHandler(socket, this, messageListener);
             receivePool.submit(handler);
             started = true;
+//            SocketMessage message = SocketMessage.success(serverIp, serverPort, socket.getInetAddress().toString().substring(1), socket.getPort(), "连接成功");
+//            messageListener.onMessageReceive(message);
+            return true;
         }
-
+        return false;
     }
 
     public synchronized void stop() {

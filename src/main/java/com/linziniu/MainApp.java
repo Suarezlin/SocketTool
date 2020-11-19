@@ -1,6 +1,7 @@
 package com.linziniu;
 
 import com.linziniu.controller.AppUI;
+import com.linziniu.controller.TCPClientPage;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,6 +23,12 @@ public class MainApp extends Application {
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/css/light_theme.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/font.css").toExternalForm());
+
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TCPClientPage.fxml"));
+//
+//        TCPClientPage tcpClientPage = loader.getController();
+//        tcpClientPage.s
+
 //        JMetro jmetro = new JMetro(Style.LIGHT);
 //        jmetro.setScene(scene);
 //        jmetro.getOverridingStylesheets().addAll(getClass().getResource("/css/font.css").toExternalForm());
